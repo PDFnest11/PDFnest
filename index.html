@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Free UK-based PDF tool for merging, compressing, splitting, and converting PDFs. Fast, secure, and perfect for parents, students, and professionals." />
+  <title>PDFNest | Free PDF Tools for the UK</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <svg width="36" height="36" viewBox="0 0 100 100" fill="#0a66c2" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="20" fill="#0a66c2"/>
+        <text x="50%" y="55%" text-anchor="middle" fill="white" font-size="36" font-family="Arial" dy=".3em">PN</text>
+      </svg>
+      <h1><span style="color:#0a66c2">PDF</span>Nest</h1>
+    </div>
+    <p class="tagline">Smart. Simple. Free PDF tools for UK parents, students, and professionals.</p>
+    <nav>
+      <ul>
+        <li><a href="#merge">Merge</a></li>
+        <li><a href="#compress">Compress</a></li>
+        <li><a href="#split">Split</a></li>
+        <li><a href="#convert">To Word</a></li>
+        <li><a href="#combine">Word + PDF</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="about">
+    <h2>Why PDFNest?</h2>
+    <p>
+      Designed with the UK in mind, PDFNest offers you simple, fast, and completely free PDF tools. Whether you're submitting school reports, applying for a job, or managing important documents at home — we've made it easy.
+    </p>
+    <p><strong>No sign-up. No fuss. Just quick results.</strong> Bookmark us today for stress-free file handling any time you need it.</p>
+  </section>
+
+  <main>
+    <section id="merge">
+      <h2>Merge PDFs</h2>
+      <input type="file" id="mergeInput" multiple accept="application/pdf">
+      <button onclick="mergePDFs()">Merge</button>
+      <a id="downloadMerge" style="display:none">Download Merged PDF</a>
+    </section>
+
+    <section id="compress">
+      <h2>Compress PDF</h2>
+      <input type="file" id="compressInput" accept="application/pdf">
+      <button onclick="compressPDF()">Compress</button>
+      <a id="downloadCompress" style="display:none">Download Compressed PDF</a>
+    </section>
+
+    <section id="split">
+      <h2>Split PDF</h2>
+      <input type="file" id="splitInput" accept="application/pdf">
+      <input type="text" id="splitRange" placeholder="e.g. 1-3">
+      <button onclick="splitPDF()">Split</button>
+      <a id="downloadSplit" style="display:none">Download Split PDF</a>
+    </section>
+
+    <section id="convert">
+      <h2>PDF to Word</h2>
+      <p>Coming soon! You'll be able to convert PDFs into editable Word documents here.</p>
+    </section>
+
+    <section id="combine">
+      <h2>Combine Word + PDF</h2>
+      <p>Coming soon! You'll be able to upload Word and PDF files and merge them here.</p>
+    </section>
+
+    <div class="ads-placeholder">[Ad space for future monetisation]</div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 PDFNest.co.uk | Built to make life easier for the UK community.</p>
+  </footer>
+
+  <script>
+    async function mergePDFs() {
+      const input = document.getElementById('mergeInput');
+      const files = input.files;
+      if (!files.length) return alert("Please select at least two PDF files.");
+
+      const mergedPdf = await PDFLib.PDFDocument.create();
+      for (let file of files) {
+        const bytes = await file.arrayBuffer();
+        const pdf = await PDFLib.PDFDocument.load(bytes);
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        copiedPages.forEach(page => mergedPdf.addPage(page));
+      }
+      const pdfBytes = await mergedPdf.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const link = document.getElementById('downloadMerge');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'merged.pdf';
+      link.style.display = 'inline';
+      link.textContent = 'Download Merged PDF';
+    }
+
+    async function compressPDF() {
+      const input = document.getElementById('compressInput');
+      const file = input.files[0];
+      if (!file) return alert("Please select a PDF to compress.");
+      const link = document.getElementById('downloadCompress');
+      link.href = URL.createObjectURL(file);
+      link.download = 'compressed.pdf';
+      link.style.display = 'inline';
+      link.textContent = 'Download Compressed PDF (simulated)';
+    }
+
+    async function splitPDF() {
+      const input = document.getElementById('splitInput');
+      const range = document.getElementById('splitRange').value;
+      const file = input.files[0];
+      if (!file || !range) return alert("Please select a PDF and enter a page range.");
+      const [start, end] = range.split('-').map(num => parseInt(num.trim()) - 1);
+      const bytes = await file.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+      const splitDoc = await PDFLib.PDFDocument.create();
+      const copiedPages = await splitDoc.copyPages(pdfDoc, pdfDoc.getPageIndices().slice(start, end + 1));
+      copiedPages.forEach(page => splitDoc.addPage(page));
+      const pdfBytes = await splitDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const link = document.getElementById('downloadSplit');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'split.pdf';
+      link.style.display = 'inline';
+      link.textContent = 'Download Split PDF';
+    }
+  </script>
+</body>
+</html>
