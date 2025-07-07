@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Free online PDF tools: Merge, Compress, Split, Convert to Word, and more.">
+    <title>PDFnest Tools - Free PDF Toolkit</title>
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="style.css" />
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8874841136787636" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header>
+        <img src="assets/logo.png" alt="PDFnest Logo" style="height:50px;">
+        <h1>PDFnest Tools</h1>
+        <p>Global PDF toolkit for students, parents and professionals.</p>
+    </header>
+    <main>
+        <section id="tools">
+            <button onclick="loadTool('merge')">Merge PDFs</button>
+            <button onclick="loadTool('compress')">Compress PDF</button>
+            <button onclick="loadTool('split')">Split PDF</button>
+            <button onclick="loadTool('pdfToWord')">PDF to Word</button>
+            <button onclick="loadTool('combineWordPdf')">Combine Word + PDF</button>
+        </section>
+        <div id="tool-container"></div>
+    </main>
+    <footer>
+        <p>&copy; 2025 PDFnest. All rights reserved.</p>
+        <p><a href="privacy.html">Privacy Policy</a></p>
+    </footer>
+    <script>
+        function loadTool(tool) {
+            document.getElementById('tool-container').innerHTML = `<iframe src="tools/${tool}.html" width="100%" height="600px" frameborder="0"></iframe>`;
+        }
+    </script>
+</body>
+</html>
