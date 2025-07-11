@@ -1,0 +1,22 @@
+
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Split PDF</title></head><body>
+<h2>Split PDF Tool</h2>
+<input type="file" id="pdf-file" accept="application/pdf">
+<input type="number" id="page" placeholder="Page number to extract">
+<button onclick="splitPDF()">Split</button>
+<iframe id="pdf-output" style="width:100%;height:600px;"></iframe>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+async function splitPDF() {
+  const file = document.getElementById('pdf-file').files[0];
+  const pageNumber = parseInt(document.getElementById('page').value) - 1;
+  const bytes = await file.arrayBuffer();
+  const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+  const newPdf = await PDFLib.PDFDocument.create();
+  const [copiedPage] = await newPdf.copyPages(pdfDoc, [pageNumber]);
+  newPdf.addPage(copiedPage);
+  const pdfBytes = await newPdf.save();
+  const blob = new Blob([pdfBytes], { type: "application/pdf" });
+  document.getElementById('pdf-output').src = URL.createObjectURL(blob);
+}
+</script></body></html>
