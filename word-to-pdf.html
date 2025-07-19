@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Word to PDF - PDFnest Tools</title>
   <style>
     body {
@@ -56,10 +56,10 @@
 </head>
 <body>
   <h1>Convert Word to PDF</h1>
-  <p>Select a .docx file below. The tool will extract the text and save it to PDF.</p>
+  <p>Select a <strong>.docx</strong> file below. The tool will extract the text and convert it to a downloadable PDF.</p>
 
-  <input type="file" id="wordFile" accept=".docx">
-  <br>
+  <input type="file" id="wordFile" accept=".docx" />
+  <br />
   <button onclick="convertDocxToPDF()">Convert to PDF</button>
 
   <div id="textOutput"></div>
@@ -73,8 +73,8 @@
     const { jsPDF } = window.jspdf;
 
     function convertDocxToPDF() {
-      const fileInput = document.getElementById('wordFile');
-      const output = document.getElementById('textOutput');
+      const fileInput = document.getElementById("wordFile");
+      const output = document.getElementById("textOutput");
       const file = fileInput.files[0];
 
       if (!file) {
@@ -84,21 +84,44 @@
 
       const reader = new FileReader();
 
-      reader.onload = function(event) {
-        mammoth.extractRawText({ arrayBuffer: event.target.result })
-          .then(function(result) {
+      reader.onload = function (event) {
+        const arrayBuffer = event.target.result;
+
+        mammoth.extractRawText({ arrayBuffer: arrayBuffer })
+          .then(function (result) {
             const text = result.value;
+
+            if (!text.trim()) {
+              alert("The Word document appears to be empty or unsupported.");
+              return;
+            }
+
             output.textContent = text;
 
             const doc = new jsPDF();
             const lines = doc.splitTextToSize(text, 180);
-            doc.text(lines, 10, 10);
+            let y = 10;
+
+            lines.forEach(line => {
+              if (y >= 280) {
+                doc.addPage();
+                y = 10;
+              }
+              doc.text(line, 10, y);
+              y += 8;
+            });
+
             doc.save("converted.pdf");
           })
-          .catch(function(err) {
-            console.error("Error reading file:", err);
-            alert("Could not read the .docx file.");
+          .catch(function (err) {
+            console.error("Error extracting text from Word document:", err);
+            alert("Sorry, there was an error converting the file. Try another .docx file.");
           });
+      };
+
+      reader.onerror = function (err) {
+        console.error("File reading error:", err);
+        alert("Could not read the file. Please try again.");
       };
 
       reader.readAsArrayBuffer(file);
@@ -106,4 +129,5 @@
   </script>
 </body>
 </html>
+
 
